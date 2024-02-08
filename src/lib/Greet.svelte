@@ -10,7 +10,16 @@
 </script>
 
 <div>
-  <input id="greet-input" placeholder="Enter a name..." bind:value={name} />
-  <button on:click={greet}>Greet</button>
+  <div class="flex">
+    <input
+      class="input"
+      type="text"
+      placeholder="Enter a name..."
+      bind:value={name}
+    />
+    <button type="button" class="btn variant-filled" on:click={greet}>
+      Greet
+    </button>
+  </div>
   <p>{greetMsg}</p>
 </div>
