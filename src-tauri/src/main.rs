@@ -20,7 +20,13 @@ struct Record {
     id: Thing,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
+    // Connect to the database
+    DB.connect::<Ws>("127.0.0.1:8000").await.unwrap();
+    // Select a namespace + database
+    DB.use_ns("surreal").use_db("surreal").await.unwrap();
+
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet, init_db, query_db])
         .run(tauri::generate_context!())
@@ -33,15 +39,11 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-async fn init_db() -> surrealdb::Result<()> {
-    // Connect to the database
-    DB.connect::<Ws>("127.0.0.1:8000").await.unwrap();
-    // Select a namespace + database
-    DB.use_ns("surreal").use_db("surreal").await.unwrap();
+async fn init_db(name: &str) -> surrealdb::Result<()> {
     // Create or update a specific record
-    let tobie: Option<Record> = DB
-        .update(("person", "tobie"))
-        .content(Person { name: "Tobie" })
+    let _: Option<Record> = DB
+        .update(("person", name))
+        .content(Person { name })
         .await
         .unwrap();
     Ok(())
@@ -49,12 +51,11 @@ async fn init_db() -> surrealdb::Result<()> {
 
 #[tauri::command]
 async fn query_db() -> String {
-    // Connect to the database
-    // DB.connect::<Ws>("127.0.0.1:8000").await.unwrap();
-    // Select a namespace + database
-    // DB.use_ns("surreal").use_db("surreal").await.unwrap();
-    // Execute the query
-    let result = DB.query("SELECT * FROM person").await.unwrap();
+    let result = DB
+        .query("SELECT * FROM person")
+        .bind(("table", "person"))
+        .await
+        .unwrap();
     // Return the result as string
     format!("Query result: {:?}", result)
 }

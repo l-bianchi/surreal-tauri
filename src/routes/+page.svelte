@@ -2,5 +2,6 @@
   import Greet from "../lib/Greet.svelte";
 </script>
 
-<h1 class="h1">Welcome to SvelteKit</h1>
-<Greet />
+<div class="flex w-screen h-screen">
+  <Greet />
+</div>
