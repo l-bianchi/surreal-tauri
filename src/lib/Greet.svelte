@@ -1,25 +1,25 @@
 <script>
   import { invoke } from "@tauri-apps/api/tauri";
 
-  let name = "";
-  let greetMsg = "";
+  let print = "";
 
-  async function greet() {
-    greetMsg = await invoke("greet", { name });
+  async function init() {
+    await invoke("init_db");
+  }
+
+  async function query() {
+    print = await invoke("query_db");
   }
 </script>
 
 <div>
-  <div class="flex">
-    <input
-      class="input"
-      type="text"
-      placeholder="Enter a name..."
-      bind:value={name}
-    />
-    <button type="button" class="btn variant-filled" on:click={greet}>
-      Greet
+  <div class="flex space-x-4">
+    <button type="button" class="btn variant-filled" on:click={init}>
+      ADD
+    </button>
+    <button type="button" class="btn variant-filled" on:click={query}>
+      SHOW
     </button>
   </div>
-  <p>{greetMsg}</p>
+  <p>{print}</p>
 </div>
